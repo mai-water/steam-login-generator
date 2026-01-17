@@ -4,6 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Steam Login Generator</title>
+
+  <!-- Favicon — анимированный в Firefox, статичный везде остальном -->
+  <link rel="icon" type="image/gif" href="https://i.imgur.com/VxxiTe7.gif">
+  <!-- Запасной статичный (первый кадр) для Chrome/Edge/Safari -->
+  <link rel="icon" type="image/png" sizes="32x32" href="https://i.imgur.com/VxxiTe7.png"> <!-- если нет png — удали эту строку -->
+
   <style>
     :root {
       --bg: #0a0a15;
@@ -14,9 +20,7 @@
       --text-dim: #a0c0e0;
       --border: #1e3a5a;
     }
-
     * { margin:0; padding:0; box-sizing:border-box; }
-
     body {
       font-family: 'Segoe UI', system-ui, sans-serif;
       background: var(--bg);
@@ -25,14 +29,12 @@
       overflow-x: hidden;
       position: relative;
     }
-
     canvas#bg {
       position: fixed;
       inset: 0;
       z-index: 0;
       pointer-events: none;
     }
-
     .container {
       position: relative;
       z-index: 2;
@@ -40,12 +42,10 @@
       margin: 30px auto;
       padding: 0 20px;
     }
-
     .header {
       text-align: center;
       margin-bottom: 2rem;
     }
-
     .logo-wrapper {
       position: relative;
       width: 180px;
@@ -57,13 +57,11 @@
       box-shadow: 0 0 30px rgba(0,180,255,0.25);
       background: rgba(0,0,0,0.3);
     }
-
     .logo-wrapper img {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
-
     h1 {
       font-size: 2.8rem;
       font-weight: 700;
@@ -73,19 +71,16 @@
       letter-spacing: -1px;
       animation: glow 5s ease-in-out infinite alternate;
     }
-
     @keyframes glow {
       from { text-shadow: 0 0 15px rgba(0,180,255,0.6); }
       to   { text-shadow: 0 0 40px rgba(0,180,255,1), 0 0 80px rgba(124,58,237,0.7); }
     }
-
     .subtitle {
       color: var(--text-dim);
       margin: 0.8rem 0 2.5rem;
       font-size: 1.1rem;
       opacity: 0.9;
     }
-
     .form-card {
       background: var(--card);
       border: 1px solid var(--border);
@@ -95,13 +90,11 @@
       backdrop-filter: blur(8px);
       margin-bottom: 2rem;
     }
-
     .form-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 1.6rem;
     }
-
     label {
       display: block;
       margin-bottom: 0.6rem;
@@ -109,7 +102,6 @@
       font-size: 0.95rem;
       font-weight: 500;
     }
-
     input[type="number"] {
       width: 100%;
       padding: 14px 16px;
@@ -120,14 +112,12 @@
       font-size: 1.05rem;
       transition: all 0.25s ease;
     }
-
     input:focus {
       outline: none;
       border-color: var(--accent);
       box-shadow: 0 0 0 3px rgba(0,180,255,0.25);
       background: #0f2540;
     }
-
     .generate-btn {
       display: block;
       width: 100%;
@@ -144,13 +134,11 @@
       transition: all 0.3s ease;
       box-shadow: 0 8px 25px rgba(0,180,255,0.35);
     }
-
     .generate-btn:hover {
       transform: translateY(-3px);
       box-shadow: 0 14px 40px rgba(0,180,255,0.55);
       background: linear-gradient(135deg, #00d4ff, #00aaff);
     }
-
     #result {
       background: #0d1b2a;
       border: 1px solid #1e3a5a;
@@ -167,12 +155,10 @@
       transform: translateY(20px);
       transition: all 0.7s cubic-bezier(0.22, 1, 0.36, 1);
     }
-
     #result.visible {
       opacity: 1;
       transform: translateY(0);
     }
-
     .copy-btn {
       display: none;
       margin: 1.2rem auto 0;
@@ -186,13 +172,11 @@
       cursor: pointer;
       transition: all 0.25s ease;
     }
-
     .copy-btn:hover {
       background: #374151;
       border-color: #60a5fa;
       transform: translateY(-2px);
     }
-
     @media (max-width: 600px) {
       h1 { font-size: 2.2rem; }
       .logo-wrapper { width: 140px; height: 140px; }
@@ -207,7 +191,7 @@
 <div class="container">
   <div class="header">
     <div class="logo-wrapper">
-      <img src="https://i.imgur.com/VxxiTe7.gif" alt="Steam banned logo">
+      <img src="https://i.imgur.com/VxxiTe7.gif" alt="Steam banned / restricted animation">
     </div>
     <h1>Steam Login Generator</h1>
     <div class="subtitle">Generate cool-looking Steam-friendly usernames</div>
@@ -237,22 +221,18 @@
 </div>
 
 <script>
-// ─── Красивые плавные частицы (не сперматозоиды) ───────────────────────
+// ─── Красивые плавные частицы ───────────────────────
 const canvas = document.getElementById('bg');
 const ctx = canvas.getContext('2d');
-
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
-
 window.addEventListener('resize', () => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 });
 
 class Particle {
-  constructor() {
-    this.reset();
-  }
+  constructor() { this.reset(); }
   reset() {
     this.x = Math.random() * canvas.width;
     this.y = Math.random() * canvas.height;
@@ -266,10 +246,8 @@ class Particle {
   update() {
     this.x += this.speedX;
     this.y += this.speedY;
-
     if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
     if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
-
     this.hue += 0.3;
     if (this.hue > 360) this.hue -= 360;
   }
@@ -290,17 +268,12 @@ const particles = Array.from({length: 80}, () => new Particle());
 function animate() {
   ctx.fillStyle = 'rgba(10,10,21,0.08)';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  particles.forEach(p => {
-    p.update();
-    p.draw();
-  });
-
+  particles.forEach(p => { p.update(); p.draw(); });
   requestAnimationFrame(animate);
 }
 animate();
 
-// ─── Остальной код генератора без изменений ────────────────────────────
+// ─── Генератор логинов ────────────────────────────
 const first_parts = [
   "steam","void","neon","pixel","nova","luna","nyx","zero","echo","blaze","raven","ghost","cyber","nexus","pulse",
   "volt","shade","umbra","dusk","noir","apex","rift","zephyr","kuro","shiro","tsuki","haze","drift","glitch","byte",
@@ -315,34 +288,26 @@ const end_parts = [
 function generateLogin(len, digits) {
   let target = len - digits;
   if (target < 5) { target = 5; digits = Math.max(0, len - target); }
-
   let base = first_parts[Math.floor(Math.random() * first_parts.length)];
   const suff = [...end_parts, "xx","zz","hq","tv","gg","pro","one"];
-
   while (base.length < target - 3) {
     const add = suff[Math.floor(Math.random() * suff.length)];
     if (add && base.length + add.length <= target + 3) base += add;
     else break;
   }
-
   while (base.length < target) {
     base += "abcdefghijklmnopqrstuvwxyz"[Math.floor(Math.random() * 26)];
   }
-
   base = base.slice(0, target);
-
   if (digits > 0) {
     for (let i = 0; i < digits; i++) base += Math.floor(Math.random() * 10);
   }
-
   base = base.replace(/[^a-z0-9]/gi, '').toLowerCase();
-
   const diff = len - base.length;
   if (diff > 0) {
     const pool = "abcdefghijklmnopqrstuvwxyz0123456789";
     for (let i = 0; i < diff; i++) base += pool[Math.floor(Math.random() * pool.length)];
   } else if (diff < 0) base = base.slice(0, len);
-
   return base;
 }
 
@@ -350,10 +315,8 @@ function generate() {
   const count  = Math.min(100, Math.max(5,  parseInt(document.getElementById("count").value)  || 12));
   const len    = Math.min(20, Math.max(6,  parseInt(document.getElementById("length").value) || 12));
   const digits = Math.min(4,  Math.max(0,  parseInt(document.getElementById("digits").value)  || 2));
-
   const seen = new Set();
   const logins = [];
-
   while (logins.length < count) {
     const login = generateLogin(len, digits);
     if (login.length >= 6 && !seen.has(login)) {
@@ -361,7 +324,6 @@ function generate() {
       logins.push(login);
     }
   }
-
   const resultEl = document.getElementById("result");
   resultEl.textContent = logins.join("\n");
   resultEl.classList.add("visible");
