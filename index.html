@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Генератор логинов</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #0f0f17;
+      color: #e0e0ff;
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    h1 {
+      text-align: center;
+      color: #a78bfa;
+      margin-bottom: 1.5rem;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.4rem;
+      color: #c7d2fe;
+      font-size: 0.95rem;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #4b5563;
+      border-radius: 6px;
+      background: #1f2937;
+      color: white;
+      font-size: 1rem;
+    }
+    button {
+      background: #7c3aed;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #9333ea;
+    }
+    #result {
+      background: #111827;
+      border: 1px solid #374151;
+      border-radius: 8px;
+      padding: 1rem;
+      min-height: 120px;
+      margin-top: 1.5rem;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .copy-btn {
+      margin-top: 0.8rem;
+      background: #4b5563;
+      font-size: 0.9rem;
+      padding: 8px 12px;
+    }
+    .copy-btn:hover {
+      background: #6b7280;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Генератор логинов</h1>
+
+  <div class="form-grid">
+    <div>
+      <label>Количество (1–200)</label>
+      <input type="number" id="count" value="10" min="1" max="200">
+    </div>
+    <div>
+      <label>Длина (6–16)</label>
+      <input type="number" id="length" value="10" min="6" max="16">
+    </div>
+    <div>
+      <label>Цифр в конце (0–4)</label>
+      <input type="number" id="digits" value="2" min="0" max="4">
+    </div>
+  </div>
+
+  <button onclick="generate()">Сгенерировать</button>
+
+  <div id="result"></div>
+  <button class="copy-btn" onclick="copyResult()" style="display:none;" id="copyBtn">Скопировать всё</button>
+</div>
+
+<script>
+// ────────────────────────────────────────────────
+// База (можно расширять дальше)
+const first_parts = [
+  "luna","nova","zay","kira","milo","jey","axel","lyra","suki","riven","nexo","vika","koda","zara","taro",
+  "rhea","nico","aria","kai","enzo","livi","sora","yuna","ren","ashe","cleo","juno","nyx","echo","vox",
+  "sage","rune","blaze","storm","dawn","finn","jade","lex","mylo","noir","opal","pax","quin","rei",
+  "cyber","neon","glitch","pixel","void","byte","zero","hex","volt","pulse","drift","haze","static","error",
+  "ghost","shade","blade","razor","spark","flux","nexus","orbit","raven","crow","midnight","umbra","sable",
+  "onyx","dusk","gloom","crypt","veil","pinky","bubble","mew","paws","bunny","kitty","starry","dreamy",
+  "softie","lolly","candy","pastel","lavender","minty","peach","sakura","mochi","yume","kawaii","azura",
+  "seraph","lumen","aelin","velvet","ember","frost","zephyr","kitsune","shiro","kuro","tsuki","hikari"
+];
+
+const end_parts = [
+  "","ix","ez","ox","ka","ra","to","mi","ce","na","ko","ta","ki","ro","sa","vi","la","da","en","or",
+  "is","yn","el","on","ar","ex","um","ia","ie","ay","wave","core","punk","glitch","zzz","uwu","chan",
+  "kun","void","dark","light","fire","ice","blade","edge","lux","zen","vibe","soul","moon","star","dust",
+  "glow","fade","echo","rift"
+];
+
+const simple_suffix = ["x","z","k","q","v","r","h","s","n","m","","xx","zz"];
+
+function generateLogin(desiredLength, digitsCount) {
+  let targetLen = desiredLength - digitsCount;
+  if (targetLen < 4) {
+    targetLen = 4;
+    digitsCount = Math.max(0, desiredLength - targetLen);
+  }
+
+  let base = first_parts[Math.floor(Math.random() * first_parts.length)];
+
+  const safeEnds = end_parts.filter(p => /^[a-z]*$/i.test(p));
+  const suff = [...safeEnds, ...simple_suffix];
+
+  while (base.length < targetLen - 2) {
+    const add = suff[Math.floor(Math.random() * suff.length)];
+    if (add && base.length + add.length <= targetLen + 2) {
+      base += add;
+    } else {
+      break;
+    }
+  }
+
+  while (base.length < targetLen - 1) {
+    base += "abcdefghijklmnopqrstuvwxyz"[Math.floor(Math.random() * 26)];
+  }
+
+  if (base.length > targetLen) {
+    base = base.slice(0, targetLen);
+  }
+
+  if (digitsCount > 0) {
+    let digits = "";
+    for (let i = 0; i < digitsCount; i++) {
+      digits += Math.floor(Math.random() * 10);
+    }
+    base += digits;
+  }
+
+  // финальная подчистка и доведение длины
+  base = base.replace(/[^a-z0-9]/gi, "");
+
+  const diff = desiredLength - base.length;
+  if (diff > 0) {
+    const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+    for (let i = 0; i < diff; i++) {
+      base += chars[Math.floor(Math.random() * chars.length)];
+    }
+  } else if (diff < 0) {
+    base = base.slice(0, desiredLength);
+  }
+
+  return base.toLowerCase();
+}
+
+function generate() {
+  const count = parseInt(document.getElementById("count").value) || 10;
+  const len = parseInt(document.getElementById("length").value) || 10;
+  const digs = parseInt(document.getElementById("digits").value) || 0;
+
+  if (count < 1 || count > 200 || len < 6 || len > 16 || digs < 0 || digs > 4) {
+    document.getElementById("result").innerHTML = "Проверьте введённые значения";
+    return;
+  }
+
+  const seen = new Set();
+  const logins = [];
+
+  while (logins.length < count) {
+    const login = generateLogin(len, digs);
+    if (login.length >= 4 && login.length <= 20 && !seen.has(login)) {
+      seen.add(login);
+      logins.push(login);
+    }
+  }
+
+  document.getElementById("result").textContent = logins.join("\n");
+  document.getElementById("copyBtn").style.display = "block";
+}
+
+function copyResult() {
+  const text = document.getElementById("result").textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    alert("Скопировано в буфер обмена!");
+  }).catch(() => {
+    alert("Не удалось скопировать");
+  });
+}
+</script>
+
+</body>
+</html>
